@@ -7,7 +7,7 @@ describe('layoutView', function() {
       return '<span class=".craft"></span><h1 id="#a-fun-game"></h1>';
     };
 
-    this.LayoutView = Backbone.Marionette.LayoutView.extend({
+    this.ItemView = Backbone.Marionette.ItemView.extend({
       template: this.layoutViewManagerTemplateFn,
       regions: {
         regionOne: '#regionOne',
@@ -30,7 +30,7 @@ describe('layoutView', function() {
 
     this.CustomRegion2 = Backbone.Marionette.Region.extend();
 
-    this.LayoutViewNoDefaultRegion = this.LayoutView.extend({
+    this.ItemViewNoDefaultRegion = this.ItemView.extend({
       regions: {
         regionOne: {
           selector: '#regionOne',
@@ -44,13 +44,13 @@ describe('layoutView', function() {
   describe('on instantiation', function() {
     beforeEach(function() {
       var suite = this;
-      this.LayoutViewInitialize = this.LayoutView.extend({
+      this.ItemViewInitialize = this.ItemView.extend({
         initialize: function() {
           suite.regionOne = this.regionOne;
         }
       });
 
-      this.layoutViewManager = new this.LayoutViewInitialize();
+      this.layoutViewManager = new this.ItemViewInitialize();
     });
 
     it('should instantiate the specified region managers', function() {
@@ -72,7 +72,7 @@ describe('layoutView', function() {
   describe('on instantiation with no regions defined', function() {
     beforeEach(function() {
       var suite = this;
-      this.NoRegions = Marionette.LayoutView.extend({});
+      this.NoRegions = Marionette.ItemView.extend({});
       this.init = function() {
         suite.layoutViewManager = new suite.NoRegions();
       };
@@ -85,7 +85,7 @@ describe('layoutView', function() {
 
   describe('on instantiation with custom region managers', function() {
     beforeEach(function() {
-      this.LayoutViewCustomRegion = this.LayoutView.extend({
+      this.ItemViewCustomRegion = this.ItemView.extend({
         regionClass: this.CustomRegion1,
         regions: {
           regionOne: {
@@ -104,7 +104,7 @@ describe('layoutView', function() {
         }
       });
 
-      this.layoutViewManager = new this.LayoutViewCustomRegion();
+      this.layoutViewManager = new this.ItemViewCustomRegion();
     });
 
     it('should instantiate specific regions with custom regions if specified', function() {
@@ -122,7 +122,7 @@ describe('layoutView', function() {
     });
 
     it('should instantiate marionette regions is no regionClass is specified', function() {
-      var layoutViewManagerNoDefault = new this.LayoutViewNoDefaultRegion();
+      var layoutViewManagerNoDefault = new this.ItemViewNoDefaultRegion();
       expect(layoutViewManagerNoDefault).to.have.property('regionTwo');
       expect(layoutViewManagerNoDefault.regionTwo).to.be.instanceof(Backbone.Marionette.Region);
     });
@@ -137,7 +137,7 @@ describe('layoutView', function() {
   describe('when regions are defined as a function', function() {
     beforeEach(function() {
       var suite = this;
-      this.LayoutView = Marionette.LayoutView.extend({
+      this.ItemView = Marionette.ItemView.extend({
         template: '#foo',
         regions: function(opts) {
           suite.options = opts;
@@ -148,7 +148,7 @@ describe('layoutView', function() {
       });
 
       this.setFixtures('<div id="foo"><div id="bar"></div></div>');
-      this.layoutView = new this.LayoutView();
+      this.layoutView = new this.ItemView();
       this.layoutView.render();
     });
 
@@ -164,7 +164,7 @@ describe('layoutView', function() {
 
   describe('on rendering', function() {
     beforeEach(function() {
-      this.layoutViewManager = new this.LayoutView();
+      this.layoutViewManager = new this.ItemView();
       sinon.spy(this.layoutViewManager, 'onRender');
       sinon.spy(this.layoutViewManager, 'onBeforeRender');
       sinon.spy(this.layoutViewManager, 'trigger');
@@ -212,7 +212,7 @@ describe('layoutView', function() {
 
   describe('when destroying', function() {
     beforeEach(function() {
-      this.layoutViewManager = new this.LayoutView();
+      this.layoutViewManager = new this.ItemView();
       this.layoutViewManager.render();
 
       this.regionOne = this.layoutViewManager.regionOne;
@@ -255,7 +255,7 @@ describe('layoutView', function() {
 
       this.setFixtures('<div id="mgr"></div>');
 
-      this.layoutView = new this.LayoutView();
+      this.layoutView = new this.ItemView();
       this.layoutView.onRender = function() {
         suite.regionOne = suite.layoutView.regionOne;
         suite.regionOne._ensureElement();
@@ -283,7 +283,7 @@ describe('layoutView', function() {
 
   describe('when re-rendering an already rendered layoutView', function() {
     beforeEach(function() {
-      this.LayoutViewBoundRender = this.LayoutView.extend({
+      this.ItemViewBoundRender = this.ItemView.extend({
         initialize: function() {
           if (this.model) {
             this.listenTo(this.model, 'change', this.render);
@@ -291,7 +291,7 @@ describe('layoutView', function() {
         }
       });
 
-      this.layoutView = new this.LayoutViewBoundRender({
+      this.layoutView = new this.ItemViewBoundRender({
         model: new Backbone.Model()
       });
       this.sinon.spy(this.layoutView.regionOne, 'empty');
@@ -333,7 +333,7 @@ describe('layoutView', function() {
 
   describe('when re-rendering a destroyed layoutView', function() {
     beforeEach(function() {
-      this.layoutView = new this.LayoutView();
+      this.layoutView = new this.ItemView();
       this.layoutView.render();
       this.region = this.layoutView.regionOne;
 
@@ -358,7 +358,7 @@ describe('layoutView', function() {
   describe('has a valid inheritance chain back to Marionette.AbstractView', function() {
     beforeEach(function() {
       this.constructor = this.sinon.spy(Marionette, 'AbstractView');
-      this.layoutView = new Marionette.LayoutView();
+      this.layoutView = new Marionette.ItemView();
     });
 
     it('calls the parent Marionette.AbstractViews constructor function on instantiation', function() {
@@ -368,7 +368,7 @@ describe('layoutView', function() {
 
   describe('when getting a region', function() {
     beforeEach(function() {
-      this.layoutView = new this.LayoutView();
+      this.layoutView = new this.ItemView();
       this.region = this.layoutView.regionOne;
     });
 
@@ -390,12 +390,12 @@ describe('layoutView', function() {
         }
       };
 
-      this.layoutView = new Backbone.Marionette.LayoutView({
+      this.layoutView = new Backbone.Marionette.ItemView({
         template: this.template,
         regions: this.regionOptions
       });
 
-      this.layoutView2 = new Backbone.Marionette.LayoutView({
+      this.layoutView2 = new Backbone.Marionette.ItemView({
         template: this.template,
         regions: function() {
           return suite.regionOptions;
@@ -420,7 +420,7 @@ describe('layoutView', function() {
 
   describe('when defining region selectors using @ui. syntax', function() {
     beforeEach(function() {
-      var UILayoutView = Backbone.Marionette.LayoutView.extend({
+      var UIItemView = Backbone.Marionette.ItemView.extend({
         template: this.template,
         regions: {
           war: '@ui.war'
@@ -429,7 +429,7 @@ describe('layoutView', function() {
           war: '.craft'
         }
       });
-      this.layoutView = new UILayoutView();
+      this.layoutView = new UIItemView();
     });
 
     it('should apply the relevant @ui. syntax selector', function() {
@@ -442,7 +442,7 @@ describe('layoutView', function() {
     beforeEach(function() {
       var suite = this;
       this.spy     = this.sinon.spy();
-      this.layout  = new (Marionette.LayoutView.extend({
+      this.layout  = new (Marionette.ItemView.extend({
         getRegionManager: function() {
           suite.spy.apply(this, arguments);
           return new Marionette.RegionManager();
@@ -476,7 +476,7 @@ describe('layoutView', function() {
         childView: this.ItemView
       });
 
-      this.Layout = Marionette.LayoutView.extend({
+      this.Layout = Marionette.ItemView.extend({
         template: _.template('<sam class="and-max"></sam>'),
         regions: {
           'sam': '.and-max'
@@ -503,7 +503,7 @@ describe('layoutView', function() {
 
   describe("when a layout has regions", function () {
     beforeEach(function () {
-      this.layout = new this.LayoutView();
+      this.layout = new this.ItemView();
       this.layout.render();
       this.regions = this.layout.getRegions();
     });
@@ -523,14 +523,14 @@ describe('layoutView', function() {
             '</div>' +
           '</div>';
         this.setFixtures(fixture);
-        this.LayoutView = Backbone.Marionette.LayoutView.extend({
+        this.ItemView = Backbone.Marionette.ItemView.extend({
           el: '.region-hash-no-template-spec .some-layout-view',
           template: false,
           regions: {
             regionOne: '.region-one'
           }
         });
-        this.layoutViewInstance = new this.LayoutView();
+        this.layoutViewInstance = new this.ItemView();
         this.layoutViewInstance.render();
         var $specNode = $('.region-hash-no-template-spec');
         this.$inScopeRegion =  $specNode.find('.some-layout-view .region-one');
@@ -552,7 +552,7 @@ describe('layoutView', function() {
       this.beforeRegionRemoveSpy = this.sinon.spy();
       this.removeRegionSpy = this.sinon.spy();
 
-      this.Layout = Marionette.LayoutView.extend({
+      this.Layout = Marionette.ItemView.extend({
         template: false,
         onBeforeAddRegion: this.beforeAddRegionSpy,
         onAddRegion: this.addRegionSpy,
