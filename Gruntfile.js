@@ -28,6 +28,8 @@ module.exports = function(grunt) {
         ' *\n' +
         ' * Includes Wreqr\n' +
         ' * https://github.com/marionettejs/backbone.wreqr/\n' +
+        ' * Includes Metal\n' +
+        ' * https://github.com/marionettejs/backbone-metal/\n' +
         ' */\n\n\n'
     },
 
@@ -250,6 +252,10 @@ module.exports = function(grunt) {
       wreqr: {
         src: './node_modules/backbone.wreqr/lib/backbone.wreqr.js',
         dest: './tmp/backbone.wreqr.bare.js'
+      },
+      metal: {
+        src: './node_modules/backbone-metal/dist/backbone-metal.js',
+        dest: './tmp/backbone.metal.bare.js'
       }
     }
   });

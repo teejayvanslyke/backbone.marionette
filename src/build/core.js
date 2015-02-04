@@ -1,7 +1,7 @@
 (function(root, factory) {
 
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'underscore', 'backbone.wreqr', 'backbone.babysitter'], function(Backbone, _) {
+    define(['backbone', 'underscore', 'backbone.wreqr', 'backbone.babysitter','backbone-metal'], function(Backbone, _) {
       return (root.Marionette = root.Mn = factory(root, Backbone, _));
     });
   } else if (typeof exports !== 'undefined') {
@@ -9,6 +9,7 @@
     var _ = require('underscore');
     var Wreqr = require('backbone.wreqr');
     var BabySitter = require('backbone.babysitter');
+    var Metal = require('backbone-metal');
     module.exports = factory(root, Backbone, _);
   } else {
     root.Marionette = root.Mn = factory(root, root.Backbone, root._);
@@ -42,6 +43,7 @@
   // @include ../error.js
   // @include ../callbacks.js
   // @include ../controller.js
+  // @include ../metal.js
   // @include ../object.js
   // @include ../region.js
   // @include ../region-manager.js

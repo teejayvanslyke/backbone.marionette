@@ -22,6 +22,9 @@
   /* istanbul ignore next */
   // @include ../../tmp/backbone.wreqr.bare.js
 
+  /* istanbul ignore next */
+  // @include ../../tmp/backbone.metal.bare.js
+
   var previousMarionette = root.Marionette;
   var previousMn = root.Mn;
 
@@ -48,6 +51,8 @@
   // @include ../error.js
   // @include ../callbacks.js
   // @include ../controller.js
+  // @include ../metal.js
+
   // @include ../object.js
   // @include ../region.js
   // @include ../region-manager.js
