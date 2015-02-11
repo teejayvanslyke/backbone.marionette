@@ -242,4 +242,61 @@ describe('base view', function() {
       expect(view.serializeModel(model)).to.be.eql(modelData);
     });
   });
+
+  describe("when proxying events to a parent layout", function() {
+
+    beforeEach(function() {
+      this.LayoutView = Marionette.LayoutView.extend({
+        template: _.template('<div class="child"></div>'),
+
+        regions: {
+          'child': '.child',
+        },
+
+      });
+
+      this.ChildView = Marionette.ItemView.extend({
+        template: _.template('')
+      });
+
+      this.layoutView = new this.LayoutView();
+      this.childView = new this.ChildView();
+      this.layoutView.render();
+
+      this.layoutEventHandler = this.sinon.spy();
+      this.layoutView.on('childView:boom', this.layoutEventHandler);
+
+      this.layoutEventOnHandler = this.sinon.spy();
+      this.layoutView.onChildViewBoom = this.layoutEventOnHandler;
+    });
+
+    describe('when there is not a containing layout', function() {
+      beforeEach(function(){
+        this.childView.triggerMethod('boom', 'foo', 'bar');
+      });
+
+      it('emits the event on the layout', function() {
+        expect(this.layoutEventHandler).not.to.have.been.called;
+      });
+    });
+
+    describe('when there is a containing layout', function() {
+      beforeEach(function(){
+        this.layoutView.showChildView('child', this.childView);
+        this.childView.triggerMethod('boom', 'foo', 'bar');
+      });
+
+      it('emits the event on the layout', function() {
+        expect(this.layoutEventHandler)
+          .to.have.been.calledWith(this.childView, 'foo', 'bar')
+          .and.CalledOnce;
+      });
+
+      it('invokes the layout on handler', function() {
+        expect(this.layoutEventOnHandler)
+          .to.have.been.calledWith(this.childView, 'foo', 'bar')
+          .and.CalledOnce;
+      });
+    });
+  });
 });

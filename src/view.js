@@ -279,6 +279,16 @@ Marionette.View = Backbone.View.extend({
       triggerMethod(behaviors[i], arguments);
     }
 
+    var containingLayout = this._containingLayout();
+    if (containingLayout) {
+
+      var eventPrefix = containingLayout.childViewEventPrefix;
+      var eventName = eventPrefix + ':' + arguments[0];
+      var args = [eventName, this].concat(_.rest(arguments));
+
+      triggerMethod(containingLayout, args);
+    }
+
     return ret;
   },
 
@@ -298,6 +308,25 @@ Marionette.View = Backbone.View.extend({
       if (!view._getNestedViews) { return memo; }
       return memo.concat(view._getNestedViews());
     }, children);
+  },
+
+  _getAncestors: function() {
+    var ancestors = [];
+    var parent  = this._parent;
+
+    while (parent) {
+      ancestors.push(parent);
+      parent = parent._parent;
+    }
+
+    return ancestors;
+  },
+
+  _containingLayout: function() {
+    var ancestors = this._getAncestors();
+    return _.find(ancestors, function(parent) {
+      return parent instanceof Marionette.LayoutView;
+    });
   },
 
   // Imports the "normalizeMethods" to transform hashes of
