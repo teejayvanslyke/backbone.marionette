@@ -253,6 +253,10 @@ describe('base view', function() {
           'child': '.child',
         },
 
+        childEvents: {
+          'boom': 'onBoom'
+        },
+
       });
 
       this.ChildView = Marionette.ItemView.extend({
@@ -268,6 +272,9 @@ describe('base view', function() {
 
       this.layoutEventOnHandler = this.sinon.spy();
       this.layoutView.onChildViewBoom = this.layoutEventOnHandler;
+
+      this.layoutViewOnBoomHandler = this.sinon.spy();
+      this.layoutView.onBoom = this.layoutViewOnBoomHandler;
     });
 
     describe('when there is not a containing layout', function() {
@@ -294,6 +301,12 @@ describe('base view', function() {
 
       it('invokes the layout on handler', function() {
         expect(this.layoutEventOnHandler)
+          .to.have.been.calledWith(this.childView, 'foo', 'bar')
+          .and.CalledOnce;
+      });
+
+      it('invokes the layout childEvents handler', function() {
+        expect(this.layoutViewOnBoomHandler)
           .to.have.been.calledWith(this.childView, 'foo', 'bar')
           .and.CalledOnce;
       });

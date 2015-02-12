@@ -257,7 +257,7 @@ Marionette.CollectionView = Marionette.View.extend({
     view._parent = this;
 
     // Proxy emptyView events
-    this.proxyChildEvents(view);
+    //this.proxyChildEvents(view);
 
     // trigger the 'before:show' event on `view` if the collection view
     // has already been shown
@@ -343,7 +343,7 @@ Marionette.CollectionView = Marionette.View.extend({
   // the given index.
   _addChildView: function(view, index) {
     // set up the child view event forwarding
-    this.proxyChildEvents(view);
+    // this.proxyChildEvents(view);
 
     this.triggerMethod('before:add:child', view);
 

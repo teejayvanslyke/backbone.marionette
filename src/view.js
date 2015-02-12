@@ -271,25 +271,42 @@ Marionette.View = Backbone.View.extend({
   // import the `triggerMethod` to trigger events with corresponding
   // methods if the method exists
   triggerMethod: function() {
+    var ret = Marionette._triggerMethod(this, arguments);
+
+    this._triggerEventOnBehaviors(arguments);
+    this._triggerEventOnParentView(arguments[0], _.rest(arguments));
+
+    return ret;
+  },
+
+  _triggerEventOnBehaviors: function(args) {
     var triggerMethod = Marionette._triggerMethod;
-    var ret = triggerMethod(this, arguments);
     var behaviors = this._behaviors;
     // Use good ol' for as this is a very hot function
     for (var i = 0, length = behaviors && behaviors.length; i < length; i++) {
-      triggerMethod(behaviors[i], arguments);
+      triggerMethod(behaviors[i], args);
+    }
+  },
+
+  _triggerEventOnParentView: function(eventName, args) {
+    var parentView = this._parentView();
+    if (!parentView) {
+      return;
     }
 
-    var containingLayout = this._containingLayout();
-    if (containingLayout) {
+    // invoke triggerMethod on parent view
+    var eventPrefix = parentView.childViewEventPrefix;
+    var prefixedEventName = eventPrefix + ':' + eventName;
 
-      var eventPrefix = containingLayout.childViewEventPrefix;
-      var eventName = eventPrefix + ':' + arguments[0];
-      var args = [eventName, this].concat(_.rest(arguments));
+    Marionette._triggerMethod(parentView, [prefixedEventName, this].concat(args));
 
-      triggerMethod(containingLayout, args);
+    // call the parent view's childEvents handler
+    var childEvents = _.result(parentView, 'childEvents');
+    var normalizedChildEvents = parentView.normalizeMethods(childEvents);
+
+    if (!!normalizedChildEvents && _.isFunction(normalizedChildEvents[eventName])) {
+      normalizedChildEvents[eventName].apply(parentView, [this].concat(args));
     }
-
-    return ret;
   },
 
   // This method returns any views that are immediate
@@ -322,10 +339,10 @@ Marionette.View = Backbone.View.extend({
     return ancestors;
   },
 
-  _containingLayout: function() {
+  _parentView: function() {
     var ancestors = this._getAncestors();
     return _.find(ancestors, function(parent) {
-      return parent instanceof Marionette.LayoutView;
+      return parent instanceof Marionette.LayoutView || parent instanceof Marionette.CollectionView;
     });
   },
 
